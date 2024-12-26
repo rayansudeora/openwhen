@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Add Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Open When Letters</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
-  
   <style>
     body {
       font-family: 'Quicksand', sans-serif;
@@ -74,7 +72,6 @@
       position: relative;
     }
 
-
     .letter h2 {
       color: #4a90e2;
     }
@@ -123,28 +120,132 @@
 <body>
 
   <h1>"Open When" Letters for You ❤️</h1>
-
   <p>Hi baby!!!! Just click on any "envelope" to reveal your special message. NO PEEKING you must wait till it makes sense</p>
 
-
-
   <div class="letters">
-
     <button onclick="showLetter('show')">Open When You See this Website</button>
-
     <button onclick="showLetter('happy')">Open When You're Happy</button>
-
     <button onclick="showLetter('sad')">Open When You're Sad</button>
-
     <button onclick="showLetter('newyears')">Open When It's New Years</button>
-  
     <button onclick="showLetter('laugh')">Open When You Need to Laugh</button>
-
     <button onclick="showLetter('bored')">Open When You're Really Bored</button>
-
   </div>
 
-    <!-- Signup Form -->
+  <!-- letter containers -->
+  <div id="show" class="letter">
+    <h2>What is this?</h2>
+    <p> hi this is a wip work in progress </p>
+  </div>
+
+  <div id="happy" class="letter">
+    <h2>When You're Happy 😊</h2>
+    <p>Love to see it</p>
+  </div>
+
+  <div id="sad" class="letter">
+    <h2>When You're Sad 🙁</h2>
+    <p>Noooooo</p>
+  </div>
+
+  <div id="newyears" class="letter">
+    <h2>Happy New Years! 🎉</h2>
+    <p>HAPPY NEW YEARS</p>
+  </div>
+
+  <div id="laugh" class="letter">
+    <h2>LAUGH LAUGH LAUGH 🤣</h2>
+    <p>Remember when...</p>
+  </div>
+
+  <div id="bored" class="letter">
+    <h2>Bored bored bored</h2>
+    <p>Ideas: Idk</p>
+  </div>
+
+  <script>
+    function showLetter(letterId) {
+      const letterContainers = document.querySelectorAll('.letter');
+      const body = document.body;
+
+      // Hide all letters
+      letterContainers.forEach(letter => {
+        letter.classList.remove('visible');
+      });
+
+      body.classList.remove(...body.classList);
+
+      // Show selected letter
+      const selectedLetter = document.getElementById(letterId);
+      selectedLetter.classList.add('visible');
+      
+      body.classList.add(letterId);
+    }
+
+    // Show the signup form and hide the login form
+    function showSignupForm() {
+      document.getElementById("signupForm").style.display = "block";
+      document.getElementById("loginForm").style.display = "none";
+    }
+
+    // Show the login form and hide the signup form
+    function showLoginForm() {
+      document.getElementById("loginForm").style.display = "block";
+      document.getElementById("signupForm").style.display = "none";
+    }
+
+    // Signup function
+    function signup() {
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          const user = userCredential.user;
+          console.log("User signed up:", user);
+          showLoggedInUI();
+        })
+        .catch(error => {
+          console.error("Error signing up:", error.message);
+          alert(error.message);
+        });
+    }
+
+    // Login function
+    function login() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          const user = userCredential.user;
+          console.log("User logged in:", user);
+          showLoggedInUI();
+        })
+        .catch(error => {
+          console.error("Error logging in:", error.message);
+          alert(error.message);
+        });
+    }
+
+    // Handle user state change
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        showLoggedInUI();
+      } else {
+        showSignupForm(); // or showLoginForm() if you prefer
+      }
+    });
+
+    // Show the UI after user is logged in
+    function showLoggedInUI() {
+      document.getElementById("signupForm").style.display = "none";
+      document.getElementById("loginForm").style.display = "none";
+      // Show any content for logged-in users, e.g. letter input form, etc.
+      alert("Welcome, you're logged in!");
+    }
+  </script>
+
+  <!-- Signup Form -->
   <div id="signupForm" class="auth-form">
     <h2>Sign Up</h2>
     <input type="email" id="signupEmail" placeholder="Email" />
@@ -162,193 +263,22 @@
     <p>Don't have an account? <span onclick="showSignupForm()">Sign up</span></p>
   </div>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
 
-  <!-- letter containers -->
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxLizgFIBWFNrBIvLOC36Iz10Gvz5XsNY",
+      authDomain: "openwhen-f7791.firebaseapp.com",
+      projectId: "openwhen-f7791",
+      storageBucket: "openwhen-f7791.firebasestorage.app",
+      messagingSenderId: "771170109868",
+      appId: "1:771170109868:web:2874627a4b4c91e5699209",
+      measurementId: "G-12F5LBTPF6"
+    };
 
-  <div id="show" class="letter">
-
-    <h2>What is this?</h2>
-
-    <p> hi this is a work in progress
-    </p>
-
-    
-
-  </div>
-
-  <div id="happy" class="letter">
-
-    <h2>When You're Happy 😊</h2>
-
-    <p>Love to see it
-    </p>
-
-    
-
-  </div>
-
-  
-
-
-
-  <div id="sad" class="letter">
-
-    <h2>When You're Sad 🙁</h2>
-
-    <p>Noooooo
-    </p>
-
-  </div>
-
-
-  <div id="newyears" class="letter">
-
-    <h2>Happy New Years! 🎉</h2>
-
-    <p>HAPPY NEW YEARS
-    </p>
-
-  </div>
-
-
-
-  <div id="laugh" class="letter">
-
-    <h2>LAUGH LAUGH LAUGH 🤣
-    </h2>
-
-    <p>Remember when...
-    </p>
-
-  </div>
-
-  <div id="bored" class="letter">
-
-    <h2>Bored bored bored
-    </h2>
-
-    <p>Ideas:
-      Idk
-    </p>
-
-  </div>
-
-
-
-  <script>
-    function showLetter(letterId) {
-      const letterContainers = document.querySelectorAll('.letter');
-      const body = document.body;
-
-      // hide all letters
-      letterContainers.forEach(letter => {
-        letter.classList.remove('visible');
-      });
-
-      body.classList.remove(...body.classList);
-
-      // show letter
-      const selectedLetter = document.getElementById(letterId);
-      selectedLetter.classList.add('visible');
-      
-      body.classList.add(letterId);
-    }
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
   </script>
-
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAxLizgFIBWFNrBIvLOC36Iz10Gvz5XsNY",
-    authDomain: "openwhen-f7791.firebaseapp.com",
-    projectId: "openwhen-f7791",
-    storageBucket: "openwhen-f7791.firebasestorage.app",
-    messagingSenderId: "771170109868",
-    appId: "1:771170109868:web:2874627a4b4c91e5699209",
-    measurementId: "G-12F5LBTPF6"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-
-
-
-
-<script>
-  // Show the signup form and hide the login form
-  function showSignupForm() {
-    document.getElementById("signupForm").style.display = "block";
-    document.getElementById("loginForm").style.display = "none";
-  }
-
-  // Show the login form and hide the signup form
-  function showLoginForm() {
-    document.getElementById("loginForm").style.display = "block";
-    document.getElementById("signupForm").style.display = "none";
-  }
-
-  // Signup function
-  function signup() {
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
-
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        const user = userCredential.user;
-        console.log("User signed up:", user);
-        showLoggedInUI();
-      })
-      .catch(error => {
-        console.error("Error signing up:", error.message);
-        alert(error.message);
-      });
-  }
-
-  // Login function
-  function login() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        const user = userCredential.user;
-        console.log("User logged in:", user);
-        showLoggedInUI();
-      })
-      .catch(error => {
-        console.error("Error logging in:", error.message);
-        alert(error.message);
-      });
-  }
-
-  // Handle user state change
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      showLoggedInUI();
-    } else {
-      showSignupForm(); // or showLoginForm() if you prefer
-    }
-  });
-
-  // Show the UI after user is logged in
-  function showLoggedInUI() {
-    document.getElementById("signupForm").style.display = "none";
-    document.getElementById("loginForm").style.display = "none";
-    // Show any content for logged-in users, e.g. letter input form, etc.
-    alert("Welcome, you're logged in!");
-  }
-</script>
-
-
-
-
 </body>
 </html>
