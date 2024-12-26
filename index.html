@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Add Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Open When Letters</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+  
   <style>
     body {
       font-family: 'Quicksand', sans-serif;
@@ -13,6 +20,17 @@
       text-align: center;
       padding: 20px;
       transition: background-color 0.5s ease;
+    }
+
+    .auth-form {
+      display: none;
+      margin: 20px auto;
+      text-align: center;
+      max-width: 400px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      border-radius: 8px;
     }
 
     h1 {
@@ -219,5 +237,117 @@
       body.classList.add(letterId);
     }
   </script>
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxLizgFIBWFNrBIvLOC36Iz10Gvz5XsNY",
+    authDomain: "openwhen-f7791.firebaseapp.com",
+    projectId: "openwhen-f7791",
+    storageBucket: "openwhen-f7791.firebasestorage.app",
+    messagingSenderId: "771170109868",
+    appId: "1:771170109868:web:2874627a4b4c91e5699209",
+    measurementId: "G-12F5LBTPF6"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+<!-- Signup Form -->
+<div id="signupForm" class="auth-form">
+  <h2>Sign Up</h2>
+  <input type="email" id="signupEmail" placeholder="Email" />
+  <input type="password" id="signupPassword" placeholder="Password" />
+  <button onclick="signup()">Sign Up</button>
+  <p>Already have an account? <span onclick="showLoginForm()">Log in</span></p>
+</div>
+
+<!-- Login Form -->
+<div id="loginForm" class="auth-form">
+  <h2>Log In</h2>
+  <input type="email" id="loginEmail" placeholder="Email" />
+  <input type="password" id="loginPassword" placeholder="Password" />
+  <button onclick="login()">Log In</button>
+  <p>Don't have an account? <span onclick="showSignupForm()">Sign up</span></p>
+</div>
+
+
+<script>
+  // Show the signup form and hide the login form
+  function showSignupForm() {
+    document.getElementById("signupForm").style.display = "block";
+    document.getElementById("loginForm").style.display = "none";
+  }
+
+  // Show the login form and hide the signup form
+  function showLoginForm() {
+    document.getElementById("loginForm").style.display = "block";
+    document.getElementById("signupForm").style.display = "none";
+  }
+
+  // Signup function
+  function signup() {
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
+
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        const user = userCredential.user;
+        console.log("User signed up:", user);
+        showLoggedInUI();
+      })
+      .catch(error => {
+        console.error("Error signing up:", error.message);
+        alert(error.message);
+      });
+  }
+
+  // Login function
+  function login() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        const user = userCredential.user;
+        console.log("User logged in:", user);
+        showLoggedInUI();
+      })
+      .catch(error => {
+        console.error("Error logging in:", error.message);
+        alert(error.message);
+      });
+  }
+
+  // Handle user state change
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      showLoggedInUI();
+    } else {
+      showSignupForm(); // or showLoginForm() if you prefer
+    }
+  });
+
+  // Show the UI after user is logged in
+  function showLoggedInUI() {
+    document.getElementById("signupForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "none";
+    // Show any content for logged-in users, e.g. letter input form, etc.
+    alert("Welcome, you're logged in!");
+  }
+</script>
+
+
+
+
 </body>
 </html>
